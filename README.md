@@ -1,5 +1,5 @@
 # fml
-A command line app that tells a joke with a small twist
+A command line app that tells a joke with an option to edit the name of the character
 
 Usage:
 
@@ -8,9 +8,14 @@ Usage:
 - There is an option to set a custom name instead of the default name Chuck Norris
 
 ```
-fml set-name <first-name> <last-name>
+fml --name <first-name> <last-name>
 ```
 Example:
 ```
-fml set-name Jhon Doe
+fml --name Jhon Doe
+```
+
+- For help, use
+```
+fml --help
 ```
