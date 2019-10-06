@@ -1,7 +1,7 @@
 # fml
 A command line app that tells a joke with an option to edit the name of the character
 
-https://pypi.org/project/fml/1.0.0/
+https://pypi.org/project/fml/
 
 ## Installation
 
