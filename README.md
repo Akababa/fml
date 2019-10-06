@@ -31,6 +31,7 @@ fml --help
 
 ## Example
 
+<pre>
   _________________________________________________
  /                                                 \
 | Zlatan Ibrahimovic can binary search unsorted dat |
@@ -61,3 +62,4 @@ fml --help
                                                               \XXXXXXXXXXXXXXXXXXXXXXXXXX/
                                                                 ""VXXXXXXXXXXXXXXXXXXV""
                                                                 
+</pre>
