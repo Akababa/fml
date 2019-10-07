@@ -3,6 +3,7 @@ import html
 import json
 import os
 import random
+import re
 from pathlib import Path
 
 import cowsay
@@ -36,19 +37,18 @@ class Fml:
         self.update_data_file({"first_name": first_name, "last_name": last_name})
         return f"Name updated to {first_name} {last_name}!"
 
+    def set_gender(self, gender) -> str:
+        self.update_data_file({"gender": gender})
+        return f"Gender updated to {gender}!"
+
     def update_data_file(self, update_dict):
         self.data.update(update_dict)
         with open(self.data_file_path, "w") as data_file_handle:
             data_file_handle.write(json.dumps(self.data))
 
     def get_joke(self):
-        if not self.data_file_exists():
-            first_name = "Chuck"
-            last_name = "Norris"
-        else:
-            data = json.load(open(self.data_file_path))
-            first_name = data["first_name"]
-            last_name = data["last_name"]
+        first_name = self.data.get("first_name", "Chuck")
+        last_name = self.data.get("last_name", "Norris")
 
         url = f"http://api.icndb.com/jokes/random?firstName={first_name}&lastName={last_name}"
         try:
@@ -59,7 +59,10 @@ class Fml:
         if not 200 <= icndb_response.status_code <= 299:
             return "Oops! Something is wrong. I wasn't able to tell you a joke :/"
 
-        return icndb_response.json().get("value").get("joke")
+        joke = icndb_response.json().get("value").get("joke")
+        if "gender" in self.data:
+            joke = self.change_gender(joke)
+        return joke
 
     def joke_with_character(self):
         characters = {
@@ -81,6 +84,23 @@ class Fml:
         joke = html.unescape(self.get_joke())
         characters[random.choice(cowsay.char_names)](joke)
 
+    def change_gender(self, joke) -> str:
+        gender = self.data["gender"]
+        pronouns = [("he", "she"), ("his", "her"), ("him", "her")]
+
+        def replace_one(before, after):
+            before_pat = r"\b{}\b".format(before)
+            nonlocal joke
+            joke = re.sub(before_pat, after, joke)
+
+        for bef, aft in pronouns:
+            if gender == "M":
+                bef, aft = aft, bef
+            replace_one(bef, aft)
+            replace_one(bef.capitalize(), aft.capitalize())
+
+        return joke
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -89,6 +109,7 @@ def main():
                     " character instead of Chuck Norris\nFacing an issue? or want to drop a feedback? write to me at "
                     "slash-arun@outlook.com or create an issue on github at https://github.com/slash-arun/fml/issues")
     parser.add_argument('--name', nargs=2, type=str, help="FIRST LAST")
+    parser.add_argument('--gender', type=str, choices=["M", "F"], help="The gender of the name")
     try:
         args = parser.parse_args()
     except argparse.ArgumentError:
@@ -96,14 +117,17 @@ def main():
             "Oops! the command could not be understood. Please type fml --help to see the usage."
         )
         return
+    # print(args)
 
     fml = Fml()
 
     if args.name:
         first_name, last_name = args.name
         print(fml.set_name(first_name, last_name))
-    else:
-        fml.joke_with_character()
+    if args.gender:
+        gender = args.gender
+        print(fml.set_gender(gender))
+    fml.joke_with_character()
 
 
 if __name__ == '__main__':
