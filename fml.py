@@ -1,8 +1,8 @@
+import argparse
 import html
 import json
 import os
 import random
-import sys
 from pathlib import Path
 
 import cowsay
@@ -10,36 +10,43 @@ import requests
 
 
 class Fml:
-    home_path = str(Path.home())
-    data_file_path = home_path + "/.fml_data"
+    def __init__(self, data_file_path=None):
+        if data_file_path is None:
+            home_path = Path.home()
+            data_file_path = home_path / ".fml_data"
+        self.data_file_path = data_file_path
+        self.data = dict()
+        if self.data_file_exists():
+            with open(data_file_path, "r") as data_file_handle:
+                try:
+                    self.data = json.load(data_file_handle)
+                except json.decoder.JSONDecodeError:
+                    pass
 
-    @staticmethod
-    def data_file_exists():
-        return os.path.exists(Fml.data_file_path)
+    def data_file_exists(self):
+        return os.path.exists(self.data_file_path)
 
-    @staticmethod
-    def set_name(first_name, last_name):
-
+    def set_name(self, first_name, last_name) -> str:
         if first_name is None or last_name is None:
             return "First name or last name is invalid"
 
         if not first_name.isalpha() or not last_name.isalpha():
-            print("First name and last name can just contain alphabets")
-            return
+            return "First name and last name can just contain alphabets"
 
-        data = {"first_name": first_name, "last_name": last_name}
+        self.update_data_file({"first_name": first_name, "last_name": last_name})
+        return f"Name updated to {first_name} {last_name}!"
 
-        with open(Fml.data_file_path, "w") as data_file_handle:
-            data_file_handle.write(json.dumps(data))
-        return
+    def update_data_file(self, update_dict):
+        self.data.update(update_dict)
+        with open(self.data_file_path, "w") as data_file_handle:
+            data_file_handle.write(json.dumps(self.data))
 
-    @staticmethod
-    def get_joke():
-        if not Fml.data_file_exists():
+    def get_joke(self):
+        if not self.data_file_exists():
             first_name = "Chuck"
             last_name = "Norris"
         else:
-            data = json.load(open(Fml.data_file_path))
+            data = json.load(open(self.data_file_path))
             first_name = data["first_name"]
             last_name = data["last_name"]
 
@@ -71,37 +78,32 @@ class Fml:
             "turtle": cowsay.turtle,
             "tux": cowsay.tux,
         }
-        joke = html.unescape(Fml.get_joke())
+        joke = html.unescape(self.get_joke())
         characters[random.choice(cowsay.char_names)](joke)
 
 
 def main():
-    if len(sys.argv) == 1:
-        Fml().joke_with_character()
+    parser = argparse.ArgumentParser(
+        description="To see a joke on your terminal. Type fml\nTo set a custom name instead of Chuck Norris"
+                    " use, fml --name <first-name> <last-name>\nExample: fml --name John Doe will use John Doe as the"
+                    " character instead of Chuck Norris\nFacing an issue? or want to drop a feedback? write to me at "
+                    "slash-arun@outlook.com or create an issue on github at https://github.com/slash-arun/fml/issues")
+    parser.add_argument('--name', nargs=2, type=str, help="FIRST LAST")
+    try:
+        args = parser.parse_args()
+    except argparse.ArgumentError:
+        print(
+            "Oops! the command could not be understood. Please type fml --help to see the usage."
+        )
         return
 
-    argument = sys.argv[1]
+    fml = Fml()
 
-    if len(sys.argv) == 2:
-        if argument == "--help":
-            print(
-                "To see a joke on your terminal. Type fml\nTo set a custom name instead of Chuck Norris"
-                " use, fml --name <first-name> <last-name>\nExample: fml --name Jhon Doe will use Jhon Doe as the"
-                " character instead of Chuck Norris\nFacing an issue? or want to drop a feedback? write to me at "
-                "slash-arun@outlook.com or create an issue on github at https://github.com/slash-arun/fml/issues"
-            )
-            return
-
-    if len(sys.argv) == 4:
-        if argument == "--name":
-            first_name = sys.argv[2]
-            last_name = sys.argv[3]
-            Fml().set_name(first_name, last_name)
-            return
-
-    print(
-        "Oops! the command could not be understood. Please type fml --help to see the usage."
-    )
+    if args.name:
+        first_name, last_name = args.name
+        print(fml.set_name(first_name, last_name))
+    else:
+        fml.joke_with_character()
 
 
 if __name__ == '__main__':
