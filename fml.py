@@ -42,8 +42,11 @@ class Fml:
             last_name = data["last_name"]
 
         url = f"http://api.icndb.com/jokes/random?firstName={first_name}&lastName={last_name}"
-        icndb_response = requests.get(url)
-
+        try:
+            icndb_response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            return "Oops! Looks like you are not connected yet. Unfortunately, I can't tell you a joke without " \
+                   "asking my friend incdb :("
         if not 200 <= icndb_response.status_code <= 299:
             return "Oops! Something is wrong. I wasn't able to tell you a joke :/"
 

@@ -11,7 +11,7 @@ URL = "https://github.com/slash-arun/fml/"
 EMAIL = "slash-arun@outlook.com"
 AUTHOR = "Arun"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 REQUIRED = ["requests", "cowsay"]
 
