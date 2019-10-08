@@ -26,15 +26,13 @@ class Fml:
         self.update_data_file({"first_name": first_name, "last_name": last_name})
         return f"Updated character name to {first_name} {last_name}!"
 
-    def update_data_file(self, update_dict) -> bool:
-        self.data.update(update_dict)
-
+    def update_data_file(self, updated_data) -> None:
         with open(self.DATA_FILE_PATH, "w") as data_file_handle:
-            data_file_handle.write(json.dumps(self.data))
+            data_file_handle.write(json.dumps(updated_data))
         data_file_handle.close()
 
     @staticmethod
-    def get_joke():
+    def get_joke() -> str:
         if not Fml.data_file_exists():
             first_name = "Chuck"
             last_name = "Norris"
@@ -55,7 +53,7 @@ class Fml:
         return icndb_response.json().get("value").get("joke")
 
     @staticmethod
-    def joke_with_character():
+    def joke_with_character() -> None:
         characters = {
             "beavis": cowsay.beavis,
             "cheese": cowsay.cheese,
@@ -76,7 +74,7 @@ class Fml:
         characters[random.choice(cowsay.char_names)](joke)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="To see a joke on your terminal. Type fml\nTo set a custom name instead of Chuck Norris"
                     " use, fml --name <first-name> <last-name>\nExample: fml --name John Doe will use John Doe as the"
