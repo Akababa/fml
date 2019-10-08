@@ -10,21 +10,20 @@ import requests
 
 
 class Fml:
-    def __init__(self, data_file_path=None):
-        if data_file_path is None:
-            home_path = Path.home()
-            data_file_path = home_path / ".fml_data"
-        self.data_file_path = data_file_path
+    DATA_FILE_PATH = f"{Path.home()}/.fml_data"
+
+    def __init__(self):
+
         self.data = dict()
         if self.data_file_exists():
-            with open(data_file_path, "r") as data_file_handle:
+            with open(self.DATA_FILE_PATH, "r") as data_file_handle:
                 try:
                     self.data = json.load(data_file_handle)
                 except json.decoder.JSONDecodeError:
                     pass
 
     def data_file_exists(self):
-        return os.path.exists(self.data_file_path)
+        return os.path.exists(self.DATA_FILE_PATH)
 
     def set_name(self, first_name, last_name) -> str:
         if first_name is None or last_name is None:
@@ -38,7 +37,7 @@ class Fml:
 
     def update_data_file(self, update_dict):
         self.data.update(update_dict)
-        with open(self.data_file_path, "w") as data_file_handle:
+        with open(self.DATA_FILE_PATH, "w") as data_file_handle:
             data_file_handle.write(json.dumps(self.data))
 
     def get_joke(self):
@@ -46,7 +45,7 @@ class Fml:
             first_name = "Chuck"
             last_name = "Norris"
         else:
-            data = json.load(open(self.data_file_path))
+            data = json.load(open(self.DATA_FILE_PATH))
             first_name = data["first_name"]
             last_name = data["last_name"]
 
