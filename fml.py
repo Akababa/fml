@@ -1,15 +1,17 @@
-import sys
-
-import cowsay
 import html
 import json
 import os
-import requests
 import random
+import sys
+from pathlib import Path
+
+import cowsay
+import requests
 
 
 class Fml:
-    data_file_path = os.getenv("HOME") + "/.fml_data"
+    home_path = str(Path.home())
+    data_file_path = home_path + "/.fml_data"
 
     @staticmethod
     def data_file_exists():
@@ -100,3 +102,7 @@ def main():
     print(
         "Oops! the command could not be understood. Please type fml --help to see the usage."
     )
+
+
+if __name__ == '__main__':
+    main()
