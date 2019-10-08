@@ -14,7 +14,7 @@ class Fml:
 
     def __init__(self):
 
-        self.data = dict()
+        self.data = {}
         if self.data_file_exists():
             with open(self.DATA_FILE_PATH, "r") as data_file_handle:
                 try:
