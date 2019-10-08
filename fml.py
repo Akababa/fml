@@ -22,8 +22,9 @@ class Fml:
                 except json.decoder.JSONDecodeError:
                     pass
 
-    def data_file_exists(self):
-        return os.path.exists(self.DATA_FILE_PATH)
+    @staticmethod
+    def data_file_exists() -> bool:
+        return os.path.exists(Fml.DATA_FILE_PATH)
 
     def set_name(self, first_name, last_name) -> str:
         if first_name is None or last_name is None:
@@ -33,12 +34,15 @@ class Fml:
             return "First name and last name can just contain alphabets"
 
         self.update_data_file({"first_name": first_name, "last_name": last_name})
-        return f"Name updated to {first_name} {last_name}!"
+        return f"Updated character name to {first_name} {last_name}!"
 
-    def update_data_file(self, update_dict):
+    def update_data_file(self, update_dict) -> bool:
         self.data.update(update_dict)
+
         with open(self.DATA_FILE_PATH, "w") as data_file_handle:
             data_file_handle.write(json.dumps(self.data))
+        data_file_handle.close()
+
 
     def get_joke(self):
         if not self.data_file_exists():
