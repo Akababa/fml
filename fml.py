@@ -12,16 +12,6 @@ import requests
 class Fml:
     DATA_FILE_PATH = f"{Path.home()}/.fml_data"
 
-    def __init__(self):
-
-        self.data = {}
-        if self.data_file_exists():
-            with open(self.DATA_FILE_PATH, "r") as data_file_handle:
-                try:
-                    self.data = json.load(data_file_handle)
-                except json.decoder.JSONDecodeError:
-                    pass
-
     @staticmethod
     def data_file_exists() -> bool:
         return os.path.exists(Fml.DATA_FILE_PATH)
