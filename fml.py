@@ -43,12 +43,13 @@ class Fml:
             data_file_handle.write(json.dumps(self.data))
         data_file_handle.close()
 
-    def get_joke(self):
-        if not self.data_file_exists():
+    @staticmethod
+    def get_joke():
+        if not Fml.data_file_exists():
             first_name = "Chuck"
             last_name = "Norris"
         else:
-            data = json.load(open(self.DATA_FILE_PATH))
+            data = json.load(open(Fml.DATA_FILE_PATH))
             first_name = data["first_name"]
             last_name = data["last_name"]
 
@@ -63,7 +64,8 @@ class Fml:
 
         return icndb_response.json().get("value").get("joke")
 
-    def joke_with_character(self):
+    @staticmethod
+    def joke_with_character():
         characters = {
             "beavis": cowsay.beavis,
             "cheese": cowsay.cheese,
@@ -80,7 +82,7 @@ class Fml:
             "turtle": cowsay.turtle,
             "tux": cowsay.tux,
         }
-        joke = html.unescape(self.get_joke())
+        joke = html.unescape(Fml.get_joke())
         characters[random.choice(cowsay.char_names)](joke)
 
 
@@ -99,14 +101,13 @@ def main():
         )
         return
 
-    fml = Fml()
-
     if args.name:
+        fml = Fml()
         first_name, last_name = args.name
         print(fml.set_name(first_name, last_name))
         return
 
-    fml.joke_with_character()
+    Fml.joke_with_character()
 
 
 if __name__ == '__main__':
