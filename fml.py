@@ -12,6 +12,7 @@ import requests
 class Fml:
     DATA_FILE_PATH = f"{Path.home()}/.fml_data"
 
+
     def __init__(self):
 
         self.data = dict()
@@ -103,7 +104,6 @@ def main():
         print(fml.set_name(first_name, last_name))
     else:
         fml.joke_with_character()
-
 
 if __name__ == '__main__':
     main()
