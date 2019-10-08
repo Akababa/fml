@@ -12,7 +12,6 @@ import requests
 class Fml:
     DATA_FILE_PATH = f"{Path.home()}/.fml_data"
 
-
     def __init__(self):
 
         self.data = dict()
@@ -43,7 +42,6 @@ class Fml:
         with open(self.DATA_FILE_PATH, "w") as data_file_handle:
             data_file_handle.write(json.dumps(self.data))
         data_file_handle.close()
-
 
     def get_joke(self):
         if not self.data_file_exists():
@@ -92,7 +90,7 @@ def main():
                     " use, fml --name <first-name> <last-name>\nExample: fml --name John Doe will use John Doe as the"
                     " character instead of Chuck Norris\nFacing an issue? or want to drop a feedback? write to me at "
                     "slash-arun@outlook.com or create an issue on github at https://github.com/slash-arun/fml/issues")
-    parser.add_argument('--name', nargs=2, type=str, help="FIRST LAST")
+    parser.add_argument('--name', nargs=2, type=str, help="first-name last-name")
     try:
         args = parser.parse_args()
     except argparse.ArgumentError:
@@ -106,8 +104,10 @@ def main():
     if args.name:
         first_name, last_name = args.name
         print(fml.set_name(first_name, last_name))
-    else:
-        fml.joke_with_character()
+        return
+
+    fml.joke_with_character()
+
 
 if __name__ == '__main__':
     main()
